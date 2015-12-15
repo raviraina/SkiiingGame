@@ -22,6 +22,7 @@ import java.util.ArrayList;
 class Mountain extends Environment {
 
     Image image1, image2;
+    int topImageY = 0;
     private ArrayList<Item> items;
 
     public Mountain() {
@@ -29,13 +30,10 @@ class Mountain extends Environment {
         image1 = ResourceTools.loadImageFromResource("skiinggame/snow.jpg");
         image2 = ResourceTools.loadImageFromResource("skiinggame/snow.jpg");
         
-        topImageY = this.getHeight() - image1.getHeight(null);
+        topImageY = 0 ; //this.getHeight() - image1.getHeight(null);
         
         items = new ArrayList<>();
         items.add(new Item(10, 5, "POWER_UP", ResourceTools.loadImageFromResource("skiinggame/snow.jpg"), true));
-        
-                
-
     }
 
     @Override
@@ -51,9 +49,7 @@ class Mountain extends Environment {
         
         if (moveDelay >= moveDelayLimit) {
             moveDelay = 0;
-            
         }
-        
 
         moveimages();
     }
@@ -78,8 +74,9 @@ class Mountain extends Environment {
 //        graphics.setFont();
 //        graphics.drawString("PLAYER 1", 420, 300);
         if ((image1 != null) && (image2 != null)) {
+            System.out.println(image1.getHeight(null) + "  " + topImageY);
             graphics.drawImage(image1, 0, topImageY, this);
-            graphics.drawImage(image2, 0, topImageY - image2.getHeight(this), this);
+            graphics.drawImage(image2, 0, topImageY + (2 * image2.getHeight(this)), this);
 
         }
         
@@ -90,16 +87,16 @@ class Mountain extends Environment {
         }
 
     }
-
-    int topImageY = 0;
+    
+    int speed = 4;
 
     private void moveimages() {
-        topImageY++;
-        topImageY++;
-        topImageY++;
-        topImageY++;
+        for (int i = 0; i < speed; i++) {
+            topImageY--;            
+        }
+
         if (image1 != null) {
-            if (topImageY > this.getHeight()) {
+            if (topImageY < this.getHeight() - image1.getHeight(null)) {
                 topImageY = this.getHeight() - image1.getHeight(null);
             }
         }
