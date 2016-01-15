@@ -21,19 +21,21 @@ import java.util.ArrayList;
  */
 class Mountain extends Environment {
 
-    Image image1, image2;
+    Image image1, image2, tree, ski_down, ski_left, ski_right;
     int topImageY = 0;
     private ArrayList<Item> items;
 
     public Mountain() {
 //        this.setBackground(Color.white);
-        image1 = ResourceTools.loadImageFromResource("skiinggame/snow.jpg");
-        image2 = ResourceTools.loadImageFromResource("skiinggame/snow.jpg");
+        image1 = ResourceTools.loadImageFromResource("skiinggame/bettersnow.jpg");
+        image2 = ResourceTools.loadImageFromResource("skiinggame/bettersnow.jpg");
+        tree = ResourceTools.loadImageFromResource("skiinggame/tree.png");
         
         topImageY = 0 ; //this.getHeight() - image1.getHeight(null);
         
         items = new ArrayList<>();
         items.add(new Item(10, 5, "POWER_UP", ResourceTools.loadImageFromResource("skiinggame/snow.jpg"), true));
+        items.add(new Item(10, 5, "TREE", ResourceTools.loadImageFromResource("skiinggame/snow.jpg"), true));
     }
 
     @Override
@@ -77,6 +79,7 @@ class Mountain extends Environment {
             System.out.println(image1.getHeight(null) + "  " + topImageY);
             graphics.drawImage(image1, 0, topImageY, this);
             graphics.drawImage(image2, 0, topImageY + (2 * image2.getHeight(this)), this);
+            
 
         }
         
