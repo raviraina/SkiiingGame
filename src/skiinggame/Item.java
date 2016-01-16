@@ -16,16 +16,26 @@ public class Item {
 
     public void draw(Graphics graphics) {
 
-//        graphics.drawImage(image, ., y, x, x, null);
+        graphics.drawImage(image, x, y, null);
     }
 
     public Item(int x, int y, String type, Image image, boolean breakable) {
         this.x = x;
         this.y = y;
         this.type = type;
+        this.image = image;
 
+//        if (type.equals()) {
+//            
+//        }
+        
+        
         this.breakable = breakable;
     }
+    
+    public static final String ITEM_TYPE_POWER_UP = "POWER_UP";
+    public static final String ITEM_TYPE_TREE = "TREE";
+    
 
     private int x, y;
     private String type;
