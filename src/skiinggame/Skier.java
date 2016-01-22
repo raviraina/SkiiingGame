@@ -22,6 +22,7 @@ public class Skier extends Actor {
     private BufferedImage ski_down, ski_left, ski_right;
     private int health;
     private Direction direction;
+    private final int maxY = 25;
 
     public void draw(Graphics graphics) {
         graphics.drawImage(getImage(), getPosition().x, getPosition().y, null);
@@ -30,8 +31,8 @@ public class Skier extends Actor {
     {
 //        BufferedImage temp = (BufferedImage) ResourceTools.loadImageFromResource("skiiinggame/spritesheet.png");
 //        image_straight = temp.getSubimage(75, 16, 16, 37);
-        ski_down = (BufferedImage) ResourceTools.loadImageFromResource("skiinggame/ski_down.png");
-        ski_left = (BufferedImage) ResourceTools.loadImageFromResource("skiinggame/ski_left.png");
+        ski_down  = (BufferedImage) ResourceTools.loadImageFromResource("skiinggame/ski_down.png");
+        ski_left  = (BufferedImage) ResourceTools.loadImageFromResource("skiinggame/ski_left.png");
         ski_right = (BufferedImage) ResourceTools.loadImageFromResource("skiinggame/ski_right.png");
 
         setDirection(Direction.DOWN);
@@ -99,8 +100,15 @@ public class Skier extends Actor {
 
     @Override
     public void move() {
+        
+        if (getPosition().y < maxY) {
+            setVelocity(0, 1);
+            super.move();
+        }
+        
         if (isAlive()) {
             if (direction == Direction.LEFT) {
+                this.getPosition().x--;
                 this.getPosition().x--;
             }
             else if (direction == Direction.RIGHT) {

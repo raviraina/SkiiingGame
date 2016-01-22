@@ -41,7 +41,7 @@ class Mountain extends Environment {
             items.add(new Item(((int) (Math.random() * 800)), ((int) (Math.random() * 600)), Item.ITEM_TYPE_TREE, tree, true));
         }
 
-        skier = new Skier(new Point(400, 25), new Velocity(0, 0));
+        skier = new Skier(new Point(400, -50), new Velocity(0, 0));
 
     }
 
@@ -70,7 +70,7 @@ class Mountain extends Environment {
     @Override
     public void keyPressedHandler(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            AudioPlayer.play("/skiinggame/What You Eatin Daddy-SoundBible.com-104789761.mp3");
+            AudioPlayer.play("/skiinggame/MP5_SMG-GunGuru-703432894.wav");
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             skier.setDirection(Direction.LEFT);
             
