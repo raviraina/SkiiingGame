@@ -7,10 +7,12 @@ package skiinggame;
 
 import audio.AudioPlayer;
 import environment.Environment;
+import environment.Velocity;
 import images.ResourceTools;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -21,34 +23,26 @@ import java.util.ArrayList;
  */
 class Mountain extends Environment {
 
-    Image image1, image2, tree, ski_down, ski_left, ski_right;
+    Image image1, image2, tree;//, ski_down, ski_left, ski_right;
     int topImageY = 0;
     private ArrayList<Item> items;
-    
+    private Skier skier;
 
     public Mountain() {
         this.setBackground(Color.white);
 //        image1 = ResourceTools.loadImageFromResource("skiinggame/bettersnow.jpg");
 //        image2 = ResourceTools.loadImageFromResource("skiinggame/bettersnow.jpg");
         tree = ResourceTools.loadImageFromResource("skiinggame/tree.png");
-        ski_down = ResourceTools.loadImageFromResource("skiinggame/ski_down.png");
-        ski_left = ResourceTools.loadImageFromResource("skiinggame/ski_left.png");
-        ski_right = ResourceTools.loadImageFromResource("skiinggame/ski_right.png");
-        
-        
 
         topImageY = 0; //this.getHeight() - image1.getHeight(null);
 
         items = new ArrayList<>();
-//        items.add(new Item(10, 5, Item.ITEM_TYPE_POWER_UP, ResourceTools.loadImageFromResource("skiinggame/snow.jpg"), true));
-        items.add(new Item(( (int) (Math.random() * 800)), ( (int) (Math.random() * 600)), Item.ITEM_TYPE_TREE, tree, true));
-        items.add(new Item(( (int) (Math.random() * 800)), ( (int) (Math.random() * 600)), Item.ITEM_TYPE_TREE, tree, true));
-        items.add(new Item(( (int) (Math.random() * 800)), ( (int) (Math.random() * 600)), Item.ITEM_TYPE_TREE, tree, true));
-        items.add(new Item(( (int) (Math.random() * 800)), ( (int) (Math.random() * 600)), Item.ITEM_TYPE_TREE, tree, true));
-        items.add(new Item(( (int) (Math.random() * 800)), ( (int) (Math.random() * 600)), Item.ITEM_TYPE_TREE, tree, true));
-        items.add(new Item(( (int) (Math.random() * 800)), ( (int) (Math.random() * 600)), Item.ITEM_TYPE_TREE, tree, true));
-        items.add(new Item(( (int) (Math.random() * 800)), ( (int) (Math.random() * 600)), Item.ITEM_TYPE_TREE, tree, true));
-        items.add(new Item(( (int) (Math.random() * 800)), ( (int) (Math.random() * 600)), Item.ITEM_TYPE_TREE, tree, true));
+        for (int i = 0; i < 12; i++) {
+            items.add(new Item(((int) (Math.random() * 800)), ((int) (Math.random() * 600)), Item.ITEM_TYPE_TREE, tree, true));
+        }
+
+        skier = new Skier(new Point(400, 25), new Velocity(0, 0));
+
     }
 
     @Override
@@ -65,6 +59,10 @@ class Mountain extends Environment {
         if (moveDelay >= moveDelayLimit) {
             moveDelay = 0;
         }
+        
+        if (skier != null) {
+            skier.move();
+        }
 
         moveimages();
     }
@@ -72,9 +70,21 @@ class Mountain extends Environment {
     @Override
     public void keyPressedHandler(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            AudioPlayer.play("/skiinggame/MP5_SMG-GunGuru-703432894.wav");
+            AudioPlayer.play("/skiinggame/What You Eatin Daddy-SoundBible.com-104789761.mp3");
+        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            skier.setDirection(Direction.LEFT);
+            
+            
+        } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            skier.setDirection(Direction.DOWN);
+        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            skier.setDirection(Direction.RIGHT);
         }
     }
+    
+//    xlower = 25
+//    xupper 675~~
+//    
 
     @Override
     public void keyReleasedHandler(KeyEvent e) {
@@ -100,6 +110,10 @@ class Mountain extends Environment {
             }
         }
 
+        if (skier != null) {
+            skier.draw(graphics);
+        }
+
     }
 
     int speed = 4;
@@ -115,19 +129,15 @@ class Mountain extends Environment {
                     item.setY(item.getY() - 1);
                     //hey, if the tree has gone off the top, then put it down 
                     //below the bottom a new, random x value 
-                    
+
                     if (item.getY() <= -100) {
                         item.setY(650);
-                        item.setX( (int) (Math.random() * 800));
+                        item.setX((int) (Math.random() * 800));
                         //random x value, somewhere between 0 and the width of the screen
-                        
-                       
-                        
+
                     }
                 }
-                
-                
-                
+
             }
         }
 
