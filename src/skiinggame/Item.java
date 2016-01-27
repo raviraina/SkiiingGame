@@ -7,6 +7,7 @@ package skiinggame;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Rectangle;
 
 /**
  *
@@ -17,6 +18,7 @@ public class Item {
     public void draw(Graphics graphics) {
 
         graphics.drawImage(image, x, y, null);
+
     }
 
     public Item(int x, int y, String type, Image image, boolean breakable) {
@@ -28,14 +30,11 @@ public class Item {
 //        if (type.equals()) {
 //            
 //        }
-        
-        
         this.breakable = breakable;
     }
-    
+
     public static final String ITEM_TYPE_POWER_UP = "POWER_UP";
     public static final String ITEM_TYPE_TREE = "TREE";
-    
 
     private int x, y;
     private String type;
@@ -43,6 +42,10 @@ public class Item {
     private boolean breakable;
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
+    public Rectangle getBoundary() {
+        return new Rectangle(x + (image.getWidth(null) / 4), y + (image.getHeight(null) / 6), image.getWidth(null) / 2, image.getHeight(null) / 3);
+    }
+
     /**
      * @return the x
      */
@@ -97,6 +100,20 @@ public class Item {
      */
     public void setImage(Image image) {
         this.image = image;
+    }
+
+    /**
+     * @return the breakable
+     */
+    public boolean isBreakable() {
+        return breakable;
+    }
+
+    /**
+     * @param breakable the breakable to set
+     */
+    public void setBreakable(boolean breakable) {
+        this.breakable = breakable;
     }
 //</editor-fold>
 

@@ -5,7 +5,12 @@
  */
 package skiinggame;
 
+import audio.Audio;
+import audio.AudioEvent;
+import audio.AudioEventListenerIntf;
 import audio.AudioPlayer;
+import audio.Playlist;
+import audio.Track;
 import environment.Environment;
 import environment.Velocity;
 import images.ResourceTools;
@@ -26,7 +31,23 @@ class Mountain extends Environment {
     Image image1, image2, tree;//, ski_down, ski_left, ski_right;
     int topImageY = 0;
     private ArrayList<Item> items;
+    private ArrayList<SnowBG> drops;
+    private ArrayList<SnowBG> safeDrops;
     private Skier skier;
+    private Playlist playlist;
+    int speed = 4;
+    int moveDelay = 0;
+    int moveDelayLimit = 5;
+    private AudioManager am;
+    int dropCount = 32;
+    int treeCount = 12;
+
+    public static enum STATE {
+
+        MENU, GAME
+    };
+    public static STATE state = STATE.MENU;
+    private Menu menu;
 
     public Mountain() {
         this.setBackground(Color.white);
@@ -36,13 +57,30 @@ class Mountain extends Environment {
 
         topImageY = 0; //this.getHeight() - image1.getHeight(null);
 
-        items = new ArrayList<>();
-        for (int i = 0; i < 12; i++) {
-            items.add(new Item(((int) (Math.random() * 800)), ((int) (Math.random() * 600)), Item.ITEM_TYPE_TREE, tree, true));
-        }
+        this.addMouseListener(new MouseInput());
 
-        skier = new Skier(new Point(400, -50), new Velocity(0, 0));
+//        if (state == STATE.GAME) {
+            items = new ArrayList<>();
+            for (int i = 0; i < treeCount; i++) {
+                items.add(new Item(((int) (Math.random() * 800)), ((int) (Math.random() * 600)), Item.ITEM_TYPE_TREE, tree, true));
+            }
 
+            drops = new ArrayList<>();
+            safeDrops = new ArrayList<>();
+//        for (int i = 0; i < dropCount; i++) {
+//            drops.add(new SnowBG(((int) (Math.random() * 800)), ((int) (Math.random() * 600))));
+//
+//        }
+
+            skier = new Skier(new Point(400, 5), new Velocity(0, 0));
+
+            am = new AudioManager();
+
+            am.playAudio(AudioManager.BGMUSIC, true);
+
+//        }
+
+        menu = new Menu();
     }
 
     @Override
@@ -50,42 +88,58 @@ class Mountain extends Environment {
 
     }
 
-    int moveDelay = 0;
-    int moveDelayLimit = 5;
-
     @Override
     public void timerTaskHandler() {
 
-        if (moveDelay >= moveDelayLimit) {
-            moveDelay = 0;
-        }
-        
-        if (skier != null) {
-            skier.move();
-        }
+//        if (state == STATE.GAME) {
 
-        moveimages();
+            if (moveDelay >= moveDelayLimit) {
+                moveDelay = 0;
+            }
+
+            if (skier != null) {
+                skier.move();
+            }
+
+            moveimages();
+            checkCollisions();
+//        }
+    }
+
+    private void checkCollisions() {
+        //check the boundary of the skier to see if it intersects with the
+        // boundary of ANY of the trees
+//        if (state == STATE.GAME) {
+            if ((skier != null) && (items != null)) {
+
+                for (Item item : items) {
+                    if (item.getBoundary().intersects(skier.getObjectBoundary())) {
+                        System.out.println("BAAANG");
+                        skier.addHealth(-1);
+                        System.out.println(skier.getHealth());
+                    }
+                }
+            }
+
+//        }
     }
 
     @Override
     public void keyPressedHandler(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            AudioPlayer.play("/skiinggame/MP5_SMG-GunGuru-703432894.wav");
-        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+
+//        if (state == STATE.GAME) {
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             skier.setDirection(Direction.LEFT);
-            
-            
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             skier.setDirection(Direction.DOWN);
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             skier.setDirection(Direction.RIGHT);
         }
     }
-    
-//    xlower = 25
-//    xupper 675~~
-//    
 
+//    }
+//    xlower = 25
+//    xupper 675~~    
     @Override
     public void keyReleasedHandler(KeyEvent e) {
     }
@@ -98,10 +152,24 @@ class Mountain extends Environment {
     public void paintEnvironment(Graphics graphics) {
 //        graphics.setFont();
 //        graphics.drawString("PLAYER 1", 420, 300);
+
+//        if (state == STATE.MENU) {
+//            menu.render(graphics);
+//            
+//            
+//
+//        } 
+//            else if (state == STATE.GAME) {
         if ((image1 != null) && (image2 != null)) {
             System.out.println(image1.getHeight(null) + "  " + topImageY);
+
             graphics.drawImage(image1, 0, topImageY, this);
             graphics.drawImage(image2, 0, topImageY + (2 * image2.getHeight(this)), this);
+        }
+
+        for (int i = 0; i < drops.size(); i++) {
+            drops.get(i).draw(graphics);
+
         }
 
         if (items != null) {
@@ -114,39 +182,65 @@ class Mountain extends Environment {
             skier.draw(graphics);
         }
 
+//        }
     }
 
-    int speed = 4;
-
     private void moveimages() {
-        for (int i = 0; i < speed; i++) {
-            //move the background
-            topImageY--;
+        int moveSpeed = 4;
+        if (skier != null) {
+            int yPos = skier.getPosition().y;
+            int xPos = skier.getPosition().x;
 
-            //move the trees and stuff...
-            if (items != null) {
-                for (Item item : items) {
-                    item.setY(item.getY() - 1);
-                    //hey, if the tree has gone off the top, then put it down 
-                    //below the bottom a new, random x value 
+            if (drops != null) {
+                drops.add(new SnowBG(xPos, yPos));
+                for (SnowBG drop : drops) {
+                    drop.setY(drop.getY() - moveSpeed);
 
-                    if (item.getY() <= -100) {
-                        item.setY(650);
-                        item.setX((int) (Math.random() * 800));
-                        //random x value, somewhere between 0 and the width of the screen
+                    if (drop.getY() <= -5) {
 
                     }
                 }
-
             }
         }
 
-        if (image1 != null) {
-            if (topImageY < this.getHeight() - image1.getHeight(null)) {
-                topImageY = this.getHeight() - image1.getHeight(null);
+        if (items != null) {
+            for (Item item : items) {
+                item.setY(item.getY() - moveSpeed);
+                //hey, if the tree has gone off the top, then put it down 
+                //below the bottom a new, random x value 
+
+                if (item.getY() <= -100) {
+                    item.setY(650);
+                    item.setX((int) (Math.random() * 800));
+                    //random x value, somewhere between 0 and the width of the screen
+                }
             }
         }
+        safeDrops = drops;
 
+//        if (safeDrops != null) {
+//            if (skier != null) {
+//                if (skier.getPosition().y > 0) {
+//                    int yPos = skier.getPosition().y;
+//                    int xPos = skier.getPosition().x;
+//                    drops.add(new SnowBG(xPos, yPos));
+//                    ArrayList<SnowBG> safeDrops = drops;
+//                    if (drops != null) {
+//                    for (SnowBG drop : safeDrops) {
+//                        drop.setY(drop.getY() - moveSpeed);
+//
+//                        if (drop.getY() <= -5) {
+//                            drops.remove(drop);
+//                        }}
+//                    }
+//                }
+//            }
+//
+//        }
+//        if (image1 != null) {
+//            if (topImageY < this.getHeight() - image1.getHeight(null)) {
+//                topImageY = this.getHeight() - image1.getHeight(null);
+//            }
     }
 
 }
