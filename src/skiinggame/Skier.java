@@ -5,6 +5,7 @@
  */
 package skiinggame;
 
+import components.HealthProviderIntf;
 import environment.Actor;
 import environment.Velocity;
 import images.ResourceTools;
@@ -18,7 +19,7 @@ import javax.swing.JOptionPane;
  *
  * @author raviraina
  */
-public class Skier extends Actor {
+public class Skier extends Actor implements HealthProviderIntf {
 
     private BufferedImage ski_down, ski_left, ski_right;
     private int health;
@@ -28,58 +29,38 @@ public class Skier extends Actor {
     private int maxX = 870;
     private int speed = 3;
     private int invultimer;
+    private int maxHealth;
 
     public void draw(Graphics graphics) {
         graphics.drawImage(getImage(), getPosition().x, getPosition().y, null);
     }
 
     {
-//        BufferedImage temp = (BufferedImage) ResourceTools.loadImageFromResource("skiiinggame/spritesheet.png");
-//        image_straight = temp.getSubimage(75, 16, 16, 37);
         ski_down = (BufferedImage) ResourceTools.loadImageFromResource("skiinggame/ski_down.png");
         ski_left = (BufferedImage) ResourceTools.loadImageFromResource("skiinggame/ski_left.png");
         ski_right = (BufferedImage) ResourceTools.loadImageFromResource("skiinggame/ski_right.png");
 
         setDirection(Direction.DOWN);
-
-        health = 100;
+        setHealth(100);
     }
 
     public Skier(Point position, Velocity velocity) {
         super(position, velocity);
+        
 
     }
 
     /**
      * @return the health
      */
-    public int getHealth() {
-        return health;
-    }
-
     /**
      * @param health the health to set
      */
-    public void setHealth(int health) {
-        this.health = health;
-    }
-
     /**
      * @param health the health to set
      */
-    public void addHealth(int health) {
-        
-        if (invultimer == 0) this.health += health;
-        
-        if (this.health == 0) {
-            JOptionPane.showInputDialog("DEAD");
-        }
-        
-    }
-    
-
     public boolean isAlive() {
-        return (health > 0);
+        return (getHealth() > 0);
     }
 
     /**
@@ -126,13 +107,11 @@ public class Skier extends Actor {
             if (this.getPosition().x < minX) {
                 setDirection(Direction.DOWN);
                 getPosition().x = minX;
-
             }
 
             if (this.getPosition().x > maxX) {
                 setDirection(direction.DOWN);
                 getPosition().x = maxX;
-
             }
 
             //TODO - limit motion to the RIGHT
@@ -143,6 +122,74 @@ public class Skier extends Actor {
             }
 
         }
+    }
+
+    @Override
+    public int getMinimumHealth() {
+        return 0;
+    }
+
+    @Override
+    public int getMaximumHealth() {
+        return 100;
+    }
+
+    @Override
+    public int getValue() {
+        return 0;
+    }
+
+    @Override
+    public double getFractionalHealth() {
+        return 0;
+    }
+
+    @Override
+    public double getPercentHealth() {
+        return 0;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public void setMaxHealth(int maxHealth) {
+        this.maxHealth = maxHealth;
+
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+        
+    }
+
+    public void addHealth(int health) {
+
+        this.health += health;
+        
+        
+        if (this.health > maxHealth) {
+            this.health = maxHealth;
+        }
+        
+        if (this.health < getMinimumHealth()) {
+            this.health = getMinimumHealth();
+        }
+        
+        if (invultimer == 0) {
+            this.setHealth(this.getHealth() + health);
+        }
+
+        if (this.getHealth() <= 0) {
+            JOptionPane.showMessageDialog(null, "RIP");
+        }
+        
+        
+
     }
 
 }

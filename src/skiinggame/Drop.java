@@ -12,7 +12,7 @@ import java.awt.Graphics;
  *
  * @author raviraina
  */
-public class SnowBG {
+public class Drop {
     
     {
         height = 10;
@@ -26,9 +26,9 @@ public class SnowBG {
         x = (100);
         y = (10);
         
-        red = 156;
-        green = 156;
-        blue = 156;
+        red = 226;
+        green = 226;
+        blue = 226;
         
         opacity = 200;
         minOpacity = 10;
@@ -38,7 +38,7 @@ public class SnowBG {
         
     }
     
-    public SnowBG(int x, int y) {
+    public Drop(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -94,6 +94,10 @@ public class SnowBG {
      */
     public void setY(int y) {
         this.y = y;
+    }
+
+    void opacity(String string) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }
