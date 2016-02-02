@@ -37,7 +37,21 @@ import java.util.logging.Logger;
  */
 class Mountain extends Environment {
 
-    Image image1, image2, tree;//, ski_down, ski_left, ski_right;
+    /**
+     * @return the state
+     */
+    public static GameState getState() {
+        return state;
+    }
+
+    /**
+     * @param aState the state to set
+     */
+    public static void setState(GameState aState) {
+        state = aState;
+    }
+
+    Image image1, image2, tree;
     int topImageY = 0;
     private ArrayList<Item> items;
     private ArrayList<Drop> drops;
@@ -49,15 +63,11 @@ class Mountain extends Environment {
     int moveDelayLimit = 5;
     private AudioManager am;
     int dropCount = 32;
-    int treeCount = 12;
+    int treeCount = 20;
     private HealthBar healthBar;
     private int score;
 
-    public static enum STATE {
-
-        MENU, GAME
-    };
-    public static STATE state = STATE.MENU;
+    private static GameState state;// = GameState.MENU;
     private Menu menu;
 
     public Mountain() {
@@ -70,48 +80,44 @@ class Mountain extends Environment {
 
         this.addMouseListener(new MouseInput());
 
-//        if (state == STATE.GAME) {
         items = new ArrayList<>();
         for (int i = 0; i < treeCount; i++) {
-            items.add(new Item(((int) (Math.random() * 800)), ((int) (Math.random() * 600)), Item.ITEM_TYPE_TREE, tree, true));
+            items.add(new Item(((int) (Math.random() * 800)), getRandomInt(300, 900), Item.ITEM_TYPE_TREE, tree, true));
         }
 
         drops = new ArrayList<>();
         safeDrops = new ArrayList<>();
-//        for (int i = 0; i < dropCount; i++) {
-//            drops.add(new Drop(((int) (Math.random() * 800)), ((int) (Math.random() * 600))));
-//
-//        }
 
         skier = new Skier(new Point(400, 5), new Velocity(0, 0));
 
         am = new AudioManager();
-
         am.playAudio(AudioManager.BGMUSIC, true);
 
-//        }
         menu = new Menu();
-        
-        healthBar = new HealthBar(new Point (785, 30), new Dimension(100, 10), skier);
-        
+        healthBar = new HealthBar(new Point(785, 30), new Dimension(100, 10), skier);
         this.score = score;
+        setState(GameState.PAUSED);
+    }
+
+    private int getRandomInt(int minimum, int maximum) {
+        return (int) (minimum + ((maximum - minimum) * Math.random()));
     }
 
     Font gamefont, gamefont_20;
-    
+
     @Override
     public void initializeEnvironment() {
-        
+
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             InputStream input = classLoader.getResourceAsStream("skiinggame/8BIT.ttf");
-            
+
             gamefont = Font.createFont(Font.TRUETYPE_FONT, input);
-            gamefont_20 = gamefont.deriveFont((float)20.0);
-            
-        } catch (FontFormatException ex){
+            gamefont_20 = gamefont.deriveFont((float) 20.0);
+
+        } catch (FontFormatException ex) {
             Logger.getLogger(Mountain.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex){
+        } catch (IOException ex) {
             Logger.getLogger(Mountain.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -120,22 +126,21 @@ class Mountain extends Environment {
     @Override
     public void timerTaskHandler() {
 
-//        if (state == STATE.GAME) {
-        if (moveDelay >= moveDelayLimit) {
-            moveDelay = 0;
-        }
+        if (state == GameState.SKIING) {
+            if (moveDelay >= moveDelayLimit) {
+                moveDelay = 0;
+            }
 
-        if (skier != null) {
-            skier.move();
-            score++;
-//            System.out.println(score);
-        }
-        
-        
+            if (skier != null) {
+                skier.move();
+                score++;
+                skier.addHealth(+1);
+            }
 
-        moveimages();
-        checkCollisions();
-//        }
+            moveimages();
+            checkCollisions();
+        }
+        checkHealth();
     }
 
     private void checkCollisions() {
@@ -143,42 +148,53 @@ class Mountain extends Environment {
         // boundary of ANY of the trees
 //        if (state == STATE.GAME) {
         if ((skier != null) && (items != null)) {
-
             for (Item item : items) {
                 if (item.getBoundary().intersects(skier.getObjectBoundary())) {
                     System.out.println("BAAANG");
-                    skier.addHealth(-1);
+                    skier.addHealth(-5);
                     System.out.println(skier.getHealth());
                 }
             }
         }
-
-//        }
+    }
+    
+    private void checkHealth(){
+        //end the game if health < minHealth
+        if ((skier != null) && (skier.isDead())) {
+            setState(GameState.CRASHED);
+            System.out.println("Crashed");
+        }
     }
 
+//<editor-fold defaultstate="collapsed" desc="Keys and Mouse">
     @Override
     public void keyPressedHandler(KeyEvent e) {
-
-//        if (state == STATE.GAME) {
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             skier.setDirection(Direction.LEFT);
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             skier.setDirection(Direction.DOWN);
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             skier.setDirection(Direction.RIGHT);
+        } else if (e.getKeyCode() == KeyEvent.VK_P) {
+            if (state == GameState.PAUSED) {
+                setState(GameState.SKIING);
+            } else if (state == GameState.SKIING){
+                setState(GameState.PAUSED);
+            }
         }
     }
-
+    
 //    }
 //    xlower = 25
-//    xupper 675~~    
+//    xupper 675~~
     @Override
     public void keyReleasedHandler(KeyEvent e) {
     }
-
+    
     @Override
     public void environmentMouseClicked(MouseEvent e) {
     }
+//</editor-fold>
 
     @Override
     public void paintEnvironment(Graphics graphics) {
@@ -215,14 +231,13 @@ class Mountain extends Environment {
             graphics.setFont(gamefont_20);
             graphics.drawString(" " + score, 850, 20);
         }
-        
+
         if (healthBar != null) {
             healthBar.draw(graphics);
         }
 
         //        }
     }
-    
 
     private void moveimages() {
         int moveSpeed = 4;
@@ -231,7 +246,7 @@ class Mountain extends Environment {
             int xPos = skier.getPosition().x;
 
             if (drops != null) {
-                System.out.println("Drops = " + drops.size());
+//                System.out.println("Drops = " + drops.size());
                 drops.add(new Drop(xPos + 4, yPos));
                 for (Drop drop : drops) {
                     drop.setY(drop.getY() - moveSpeed);
@@ -278,50 +293,27 @@ class Mountain extends Environment {
 
             }
         }
-        
-        cleanUpDrops();        
-        safeDrops = drops;
 
-//        if (safeDrops != null) {
-//            if (skier != null) {
-//                if (skier.getPosition().y > 0) {
-//                    int yPos = skier.getPosition().y;
-//                    int xPos = skier.getPosition().x;
-//                    drops.add(new Drop(xPos, yPos));
-//                    ArrayList<SnowBG> safeDrops = drops;
-//                    if (drops != null) {
-//                    for (Drop drop : safeDrops) {
-//                        drop.setY(drop.getY() - moveSpeed);
-//
-//                        if (drop.getY() <= -5) {
-//                            drops.remove(drop);
-//                        }}
-//                    }
-//                }
-//            }
-//
-//        }
+        cleanUpDrops();
+
 //        if (image1 != null) {
 //            if (topImageY < this.getHeight() - image1.getHeight(null)) {
 //                topImageY = this.getHeight() - image1.getHeight(null);
 //            }
     }
-    
-    public void cleanUpDrops(){
+
+    public void cleanUpDrops() {
         ArrayList<Drop> toRemoveList = new ArrayList<>();
-        for(Drop drop: drops){
+        for (Drop drop : drops) {
             if (drop.opacity == 0) {
                 toRemoveList.add(drop);
             }
         }
-        
+
         drops.removeAll(toRemoveList);
     }
 
-
 }
-
-
 
 // 1. Have game reset to beginning when character dies.
 // 2. Have character flash/reset when damage is taken.

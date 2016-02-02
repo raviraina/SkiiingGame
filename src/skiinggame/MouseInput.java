@@ -29,7 +29,7 @@ public class MouseInput implements MouseListener{
         if (mx >= rectX && mx <= rectX + 100) {
             if (my >= 150 && my <= 200) {
 //                Button
-                Mountain.state = Mountain.STATE.GAME;
+                Mountain.setState(GameState.SKIING);
                 
             }
             
