@@ -26,10 +26,11 @@ public class AudioManager implements AudioPlayerIntf {
     
     public static String BGMUSIC = "BGMUSIC";
     public static String TURNSOUND = "TURNSOUND";
-    
+    public static String PAUSESOUND = "PAUSESOUND";
     {
         music.add(new Track (BGMUSIC, Source.RESOURCE, "/skiinggame/BGMusic.wav" ));
-        music.add(new Track( TURNSOUND, Source.RESOURCE, "/skiinggame/TurnSound.wav"));
+        music.add(new Track( TURNSOUND, Source.RESOURCE, "/skiinggame/MoveSound-old1.wav"));
+        music.add(new Track( PAUSESOUND, Source.RESOURCE, "/skiinggame/PauseSound.wav"));
         
         sm = new SoundManager(new Playlist(music));
     
@@ -49,6 +50,7 @@ public class AudioManager implements AudioPlayerIntf {
 
     @Override
     public void stopAudio(String name) {
+        sm.stop(name);
     }
     
     

@@ -64,8 +64,8 @@ public class Skier extends Actor implements HealthProviderIntf {
         ski_right = (BufferedImage) ResourceTools.loadImageFromResource("skiinggame/ski_right.png");
 
         setDirection(Direction.DOWN);
-        setHealth(100);
-        setMaximumHealth(100);
+        setHealth(1000);
+        setMaximumHealth(1000);
     }
 
     public Skier(Point position, Velocity velocity) {
@@ -130,7 +130,7 @@ public class Skier extends Actor implements HealthProviderIntf {
 
     @Override
     public double getPercentHealth() {
-        return ( 100.0  * getHealth() / getMaximumHealth());
+        return ( 1000.0  * getHealth() / getMaximumHealth());
     }
 
     @Override
