@@ -284,7 +284,7 @@ class Mountain extends Environment {
         graphics.setColor(Color.white);
         graphics.setFont(gamefont_20);
         graphics.drawString("SKI ESCAPE", 400, 20);
-        graphics.drawString(" " + score, 850, 20);
+        graphics.drawString("SCORE = " + score, 780, 20);
 
         if (healthBar != null) {
             healthBar.draw(graphics);
