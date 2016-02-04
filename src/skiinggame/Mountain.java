@@ -108,7 +108,7 @@ class Mountain extends Environment {
             items.add(new Item(((int) (Math.random() * 800)), getRandomInt(300, 900), Item.ITEM_TYPE_TREE, tree, true));
         }
 
-        System.out.println("" + Mountain.WIDTH);
+        
 
     }
 
