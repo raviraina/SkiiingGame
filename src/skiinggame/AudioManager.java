@@ -62,3 +62,6 @@ public class AudioManager implements AudioPlayerIntf {
     
     
 }
+
+
+//IF ERRORS OCCUR, UN COMMENT SOUTS FROM SOUNDMANAGER IN GAMELIBRARY

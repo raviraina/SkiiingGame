@@ -77,7 +77,7 @@ public class Skier extends Actor implements HealthProviderIntf {
     private BufferedImage ski_down, ski_left, ski_right;
     private int health;
     private Direction direction;
-    private final int maxY = 100;
+    private final int maxY = 150;
     private int minX = 5;
     private int maxX = 870;
     private int speed = 3;

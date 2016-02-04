@@ -108,8 +108,10 @@ class Mountain extends Environment {
             items.add(new Item(((int) (Math.random() * 800)), getRandomInt(300, 900), Item.ITEM_TYPE_TREE, tree, true));
         }
 
-        
+    }
 
+    private ArrayList<Item> getItems() {
+        return items;
     }
 
     private int getRandomInt(int minimum, int maximum) {
@@ -163,7 +165,7 @@ class Mountain extends Environment {
         // boundary of ANY of the trees
 //        if (state == STATE.GAME) {
         if ((skier != null) && (items != null)) {
-            for (Item item : items) {
+            for (Item item : getItems()) {
                 if (item.getBoundary().intersects(skier.getObjectBoundary())) {
                     System.out.println("BAAANG");
                     skier.addHealth(-30);
@@ -189,19 +191,39 @@ class Mountain extends Environment {
     @Override
     public void keyPressedHandler(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            skier.setDirection(Direction.LEFT);
-            am.playAudio(AudioManager.TURNSOUND, false);
+            if (state == GameState.SKIING) {
+                skier.setDirection(Direction.LEFT);
+                am.playAudio(AudioManager.TURNSOUND, false);
+            }
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            skier.setDirection(Direction.DOWN);
+            if (state == GameState.SKIING) {
+                skier.setDirection(Direction.DOWN);
+            }
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            skier.setDirection(Direction.RIGHT);
-            am.playAudio(AudioManager.TURNSOUND, false);
+            if (state == GameState.SKIING) {
+                skier.setDirection(Direction.RIGHT);
+                am.playAudio(AudioManager.TURNSOUND, false);
+            }
         } else if (e.getKeyCode() == KeyEvent.VK_P) {
             if (state == GameState.PAUSED) {
                 setState(GameState.SKIING);
             } else if (state == GameState.SKIING) {
                 setState(GameState.PAUSED);
             }
+        } else if (e.getKeyCode() == KeyEvent.VK_Q) {
+            skier.setHealth(-1);
+        } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            if (state == GameState.CRASHED) {
+                setState(GameState.SKIING);
+                items.clear();
+                skier = new Skier(new Point(440, 5), new Velocity(0, 0));
+                healthBar = new HealthBar(new Point(15, 10), new Dimension(10, 10), skier);
+                for (int i = 0; i < treeCount; i++) {
+                    items.add(new Item(((int) (Math.random() * 800)), getRandomInt(300, 900), Item.ITEM_TYPE_TREE, tree, true));
+                    score = 0;
+                }
+            }
+
         }
     }
 
@@ -210,6 +232,7 @@ class Mountain extends Environment {
 //    xupper 675~~
     @Override
     public void keyReleasedHandler(KeyEvent e) {
+
     }
 
     @Override
@@ -262,12 +285,18 @@ class Mountain extends Environment {
         graphics.setFont(gamefont_20);
         graphics.drawString("SKI ESCAPE", 400, 20);
         graphics.drawString(" " + score, 850, 20);
-         
+
         if (healthBar != null) {
             healthBar.draw(graphics);
         }
-        
-       
+
+        if (skier.isDead() == true) {
+            graphics.setFont(gamefont_60);
+            graphics.setColor(Color.black);
+            graphics.drawString("GAME OVER", 320, 250);
+            graphics.setFont(gamefont_40);
+            graphics.drawString("PRESS SPACE TO RESTART", 220, 450);
+        }
 
     }
     private int trail = 4;
@@ -305,7 +334,7 @@ class Mountain extends Environment {
         }
 
         if (items != null) {
-            for (Item item : items) {
+            for (Item item : getItems()) {
                 item.setY(item.getY() - moveSpeed);
                 //hey, if the tree has gone off the top, then put it down
                 //below the bottom a new, random x value
