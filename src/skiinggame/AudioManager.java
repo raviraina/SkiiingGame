@@ -27,10 +27,15 @@ public class AudioManager implements AudioPlayerIntf {
     public static String BGMUSIC = "BGMUSIC";
     public static String TURNSOUND = "TURNSOUND";
     public static String PAUSESOUND = "PAUSESOUND";
+    public static String CRASHSOUND = "CRASHSOUND";
+//    public static String DEADSOUND = "DEADSOUND";
     {
-        music.add(new Track (BGMUSIC, Source.RESOURCE, "/skiinggame/BGMusic.wav" ));
+        music.add(new Track( BGMUSIC, Source.RESOURCE, "/skiinggame/BGMusic.wav" ));
         music.add(new Track( TURNSOUND, Source.RESOURCE, "/skiinggame/MoveSound-old1.wav"));
         music.add(new Track( PAUSESOUND, Source.RESOURCE, "/skiinggame/PauseSound.wav"));
+        music.add(new Track( CRASHSOUND, Source.RESOURCE, "/skiinggame/CrashSound.wav"));
+//        music.add(new Track( DEADSOUND, Source.RESOURCE, "/skiinggame/DeathSound"));
+        
         
         sm = new SoundManager(new Playlist(music));
     

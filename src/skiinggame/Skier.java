@@ -21,7 +21,7 @@ public class Skier extends Actor implements HealthProviderIntf {
 
 //<editor-fold defaultstate="collapsed" desc="Methods">
     public void draw(Graphics graphics) {
-        graphics.drawImage(getImage(), getPosition().x, getPosition().y, null);
+        graphics.drawImage(getImage(), getPosition().x, getPosition().y - 30, null);
     }
 
     @Override

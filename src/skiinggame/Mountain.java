@@ -94,7 +94,7 @@ class Mountain extends Environment {
         this.addMouseListener(new MouseInput());
         skier = new Skier(new Point(440, 5), new Velocity(0, 0));
         menu = new Menu();
-        healthBar = new HealthBar(new Point(785, 30), new Dimension(10, 10), skier);
+        healthBar = new HealthBar(new Point(15, 10), new Dimension(10, 10), skier);
         am = new AudioManager();
         this.score = score;
         setState(GameState.PAUSED);
@@ -107,6 +107,8 @@ class Mountain extends Environment {
         for (int i = 0; i < treeCount; i++) {
             items.add(new Item(((int) (Math.random() * 800)), getRandomInt(300, 900), Item.ITEM_TYPE_TREE, tree, true));
         }
+
+        System.out.println("" + Mountain.WIDTH);
 
     }
 
@@ -166,6 +168,8 @@ class Mountain extends Environment {
                     System.out.println("BAAANG");
                     skier.addHealth(-30);
                     System.out.println(skier.getHealth());
+                    score = score - 1;
+                    am.playAudio(AudioManager.CRASHSOUND, false);
                 }
             }
         }
@@ -176,6 +180,7 @@ class Mountain extends Environment {
         if ((skier != null) && (skier.isDead())) {
             setState(GameState.CRASHED);
             System.out.println("Crashed");
+//            am.playAudio(AudioManager.DEADSOUND, false);
         }
     }
 //</editor-fold>
@@ -197,10 +202,6 @@ class Mountain extends Environment {
             } else if (state == GameState.SKIING) {
                 setState(GameState.PAUSED);
             }
-        } else if (e.getKeyCode() == KeyEvent.VK_H) {
-            
-                setState(GameState.SKIING);
-            
         }
     }
 
@@ -221,61 +222,66 @@ class Mountain extends Environment {
     public void paintEnvironment(Graphics graphics) {
 //        graphics.setFont();
 //        graphics.drawString("PLAYER 1", 420, 300);
-        if (state == GameState.MENU) {
-            menu.render(graphics); }
-            
-            
+//        if (state == GameState.MENU) {
+//            menu.render(graphics);
+//        }
 
 //            if (state == GameState.SKIING) {
+        if ((image1 != null) && (image2 != null)) {
+            System.out.println(image1.getHeight(null) + "  " + topImageY);
 
-                if ((image1 != null) && (image2 != null)) {
-                    System.out.println(image1.getHeight(null) + "  " + topImageY);
+            graphics.drawImage(image1, 0, topImageY, this);
+            graphics.drawImage(image2, 0, topImageY + (2 * image2.getHeight(this)), this);
+        }
 
-                    graphics.drawImage(image1, 0, topImageY, this);
-                    graphics.drawImage(image2, 0, topImageY + (2 * image2.getHeight(this)), this);
-                }
+        for (int i = 0; i < drops.size(); i++) {
+            drops.get(i).draw(graphics);
+        }
 
-                for (int i = 0; i < drops.size(); i++) {
-                    drops.get(i).draw(graphics);
-                }
+        if (skier != null) {
+            skier.draw(graphics);
 
-                if (items != null) {
-                    for (int i = 0; i < items.size(); i++) {
-                        items.get(i).draw(graphics);
-                    }
-                }
+        }
 
-                if (skier != null) {
-                    skier.draw(graphics);
-                    graphics.setColor(Color.black);
-                    graphics.setFont(gamefont_20);
-                    graphics.drawString(" " + score, 850, 20);
-                }
-
-                if (healthBar != null) {
-                    healthBar.draw(graphics);
-                }
-
-                if (state == GameState.PAUSED) {
-                    graphics.setFont(gamefont_60);
-                    graphics.setColor(Color.black);
-                    graphics.drawString("PAUSED", 350, 250);
-
-                }
-
+        if (items != null) {
+            for (int i = 0; i < items.size(); i++) {
+                items.get(i).draw(graphics);
             }
+        }
+
+        if (state == GameState.PAUSED) {
+            graphics.setFont(gamefont_60);
+            graphics.setColor(Color.black);
+            graphics.drawString("PAUSED", 350, 250);
+
+        }
+
+        graphics.setColor(Color.black);
+        graphics.fillRect(0, 0, 900, 30);
+        graphics.setColor(Color.white);
+        graphics.setFont(gamefont_20);
+        graphics.drawString("SKI ESCAPE", 400, 20);
+        graphics.drawString(" " + score, 850, 20);
+         
+        if (healthBar != null) {
+            healthBar.draw(graphics);
+        }
         
-    
+       
+
+    }
+    private int trail = 4;
 
     private void moveimages() {
         int moveSpeed = 4;
+
         if (skier != null) {
             int yPos = skier.getPosition().y;
             int xPos = skier.getPosition().x;
 
             if (drops != null) {
 //                System.out.println("Drops = " + drops.size());
-                drops.add(new Drop(xPos + 4, yPos));
+                drops.add(new Drop(xPos + trail, yPos));
                 for (Drop drop : drops) {
                     drop.setY(drop.getY() - moveSpeed);
 
@@ -342,11 +348,16 @@ class Mountain extends Environment {
     }
 //</editor-fold>
 
+    /**
+     * @param trail the trail to set
+     */
+    public void setTrail(int trail) {
+        this.trail = trail;
+    }
+
 }
 
 // 1. Have game reset to beginning when character dies.
 // 2. Have character flash/reset when damage is taken.
 // 3. Use drop class to texture background.
-// 4. Health Bar
-// 5. Scoring system (By amount of time character is alive?, Loose some of the score when damage is taken?)
 // 6. Fix a very broken start menu.

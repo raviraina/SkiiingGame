@@ -26,9 +26,9 @@ public class Drop {
         x = (100);
         y = (10);
         
-        red = 226;
-        green = 226;
-        blue = 226;
+        red = 239;
+        green = 239;
+        blue = 239;
         
         opacity = 200;
         minOpacity = 10;
