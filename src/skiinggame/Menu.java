@@ -29,10 +29,12 @@ public class Menu {
         
         Graphics2D g2d = (Graphics2D) g;
         
+        
+        
         Font fnt0 = new Font("arial", Font.BOLD, 50);
         g.setFont(fnt0);
         g.setColor(Color.black);
-        g.drawString("The Game", 330, 100);
+        g.drawString("Ski Escape", 315, 100);
         
         Font fnt1 = new Font("arial", Font.BOLD, 30);
         g.setFont(fnt1);
@@ -44,5 +46,6 @@ public class Menu {
         g2d.draw(quitButton);
         
     }
+    
     
 }

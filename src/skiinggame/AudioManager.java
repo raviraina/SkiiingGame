@@ -5,14 +5,11 @@
  */
 package skiinggame;
 
-import audio.Audio;
-import audio.AudioEvent;
-import audio.AudioEventListenerIntf;
-import audio.AudioPlayer;
 import audio.SoundManager;
 import audio.Playlist;
 import audio.Source;
 import audio.Track;
+import java.awt.Font;
 import java.util.ArrayList;
 
 /**
@@ -23,6 +20,7 @@ public class AudioManager implements AudioPlayerIntf {
     
     private SoundManager sm;
     private ArrayList<Track> music = new ArrayList<>();
+    Font gamefont, gamefont_20, gamefont_40, gamefont_60;
     
     public static String BGMUSIC = "BGMUSIC";
     public static String TURNSOUND = "TURNSOUND";
@@ -57,6 +55,9 @@ public class AudioManager implements AudioPlayerIntf {
     public void stopAudio(String name) {
         sm.stop(name);
     }
+    
+
+
     
     
     
