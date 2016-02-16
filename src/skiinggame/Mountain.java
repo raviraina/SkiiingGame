@@ -224,8 +224,10 @@ class Mountain extends Environment {
                     setScore(0);
                 }
             }
-
+        } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            System.exit(0);
         }
+
     }
 
 //    }
@@ -238,17 +240,17 @@ class Mountain extends Environment {
 
     @Override
     public void environmentMouseClicked(MouseEvent e) {
-        
+
         if (state == GameState.MENU) {
-            if (menu.playButton.contains(e.getPoint())){
+            if (menu.playButton.contains(e.getPoint())) {
                 System.out.println("WOWOOWOWOWOWOOWWOW");
                 setState(GameState.SKIING);
             }
 //            else if (menu.helpButton.contains(e.getPoint())) {
-                
+
 //            }
         }
-        
+
     }
 //</editor-fold>
 
@@ -259,7 +261,7 @@ class Mountain extends Environment {
 //        graphics.drawString("PLAYER 1", 420, 300);
         if (state == GameState.MENU) {
             menu.render(graphics);
-        } else if ((state == GameState.SKIING)  ||(state == GameState.CRASHED)  || (state == GameState.PAUSED)){
+        } else if ((state == GameState.SKIING) || (state == GameState.CRASHED) || (state == GameState.PAUSED)) {
 
             if ((image1 != null) && (image2 != null)) {
                 System.out.println(image1.getHeight(null) + "  " + topImageY);
@@ -307,7 +309,7 @@ class Mountain extends Environment {
                 graphics.setColor(Color.black);
                 graphics.drawString("PAUSED", 350, 250);
             }
-            
+
         }
 
     }
@@ -404,7 +406,6 @@ class Mountain extends Environment {
 }
 
 // 2. Have character flash/reset when damage is taken.
-// 6. Fix a very broken start menu.
 // 7. slide effect.
 // 8. levels?
 // 9. buffer on music
