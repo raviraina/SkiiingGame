@@ -22,6 +22,7 @@ public class Menu {
     
     int rectX = 390;
     Image playbutton;
+    Image menubg;
     
     
     
@@ -31,12 +32,13 @@ public class Menu {
 
 
     public void render(Graphics g) {
-
+        
         
         Graphics2D g2d = (Graphics2D) g;
         
-        
-        
+       
+        menubg = ResourceTools.loadImageFromResource("skiinggame/4765.jpg");
+        g.drawImage(menubg, 1, 1, null);
         Font fnt0 = new Font("arial", Font.BOLD, 50);
         playbutton = ResourceTools.loadImageFromResource("skiinggame/play_button.png");
         g.drawImage(playbutton, 250, 130, null);
@@ -46,19 +48,17 @@ public class Menu {
         
         Font fnt1 = new Font("arial", Font.BOLD, 30);
         g.setFont(fnt1);
+
 //        g.drawString("Play", playButton.x + 19, playButton.y + 35);
         
         g.setColor(new Color(0,0,0,0));
         g2d.draw(playButton);
+
 //        g.drawString("Help", helpButton.x + 19, helpButton.y + 35);
 //        g2d.draw(helpButton);
 //        g.drawString("Quit", quitButton.x + 19, quitButton.y + 35);
 //        g2d.draw(quitButton);
         
-    }
-
-    private void setBackground(Color black) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     

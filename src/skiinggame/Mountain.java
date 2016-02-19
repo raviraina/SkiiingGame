@@ -254,7 +254,7 @@ class Mountain extends Environment {
     }
 //</editor-fold>
 
-//<editor-fold defaultstate="collapsed" desc="Paint and Move Images">
+//<editor-fold defaultstate="collapsed" desc="Paint and Move">
     @Override
     public void paintEnvironment(Graphics graphics) {
 //        graphics.setFont();
@@ -262,40 +262,40 @@ class Mountain extends Environment {
         if (state == GameState.MENU) {
             menu.render(graphics);
         } else if ((state == GameState.SKIING) || (state == GameState.CRASHED) || (state == GameState.PAUSED)) {
-
+            
             if ((image1 != null) && (image2 != null)) {
                 System.out.println(image1.getHeight(null) + "  " + topImageY);
-
+                
                 graphics.drawImage(image1, 0, topImageY, this);
                 graphics.drawImage(image2, 0, topImageY + (2 * image2.getHeight(this)), this);
             }
-
+            
             for (int i = 0; i < drops.size(); i++) {
                 drops.get(i).draw(graphics);
             }
-
+            
             if (skier != null) {
                 skier.draw(graphics);
-
+                
             }
-
+            
             if (items != null) {
                 for (int i = 0; i < items.size(); i++) {
                     items.get(i).draw(graphics);
                 }
             }
-
+            
             graphics.setColor(Color.black);
             graphics.fillRect(0, 0, 900, 30);
             graphics.setColor(Color.white);
             graphics.setFont(gamefont_20);
             graphics.drawString("SKI ESCAPE", 400, 20);
             graphics.drawString("          " + getScore(), 780, 20);
-
+            
             if (healthBar != null) {
                 healthBar.draw(graphics);
             }
-
+            
             if (skier.isDead() == true) {
                 graphics.setFont(gamefont_60);
                 graphics.setColor(Color.black);
@@ -303,55 +303,55 @@ class Mountain extends Environment {
                 graphics.setFont(gamefont_40);
                 graphics.drawString("  PRESS SPACE TO RESTART", 220, 450);
             }
-
+            
             if (state == GameState.PAUSED) {
                 graphics.setFont(gamefont_60);
                 graphics.setColor(Color.black);
                 graphics.drawString("PAUSED", 350, 250);
             }
-
+            
         }
-
+        
     }
-
+    
     private void moveimages() {
         int moveSpeed = 4;
-
+        
         if (skier != null) {
             int yPos = skier.getPosition().y;
             int xPos = skier.getPosition().x;
-
+            
             if (drops != null) {
 //                System.out.println("Drops = " + drops.size());
                 drops.add(new Drop(xPos + 4, yPos - 15));
                 for (Drop drop : drops) {
                     drop.setY(drop.getY() - moveSpeed);
-
+                    
                     if (drop.getY() <= -30) {
                         drop.opacity = 0;
                     }
                 }
             }
-
+            
             if (drops != null) {
                 drops.add(new Drop(xPos + 14, yPos - 15));
                 for (Drop drop : drops) {
                     drop.setY(drop.getY() - moveSpeed);
-
+                    
                     if (drop.getY() <= -30) {
                         drop.opacity = 0;
-
+                        
                     }
                 }
             }
         }
-
+        
         if (items != null) {
             for (Item item : getItems()) {
                 item.setY(item.getY() - moveSpeed);
                 //hey, if the tree has gone off the top, then put it down
                 //below the bottom a new, random x value
-
+                
                 if (item.getY() <= -100) {
                     item.setY(650);
                     item.setX((int) (Math.random() * 800));
@@ -361,23 +361,23 @@ class Mountain extends Environment {
         } else if (drops != null) {
             for (Drop drop : drops) {
                 drop.setY(drop.getY() - moveSpeed);
-
+                
                 if (drop.getY() <= -100) {
                     drop.setY(650);
                     drop.setX((int) (Math.random() * 800));
                 }
-
+                
             }
         }
-
+        
         cleanUpDrops();
-
+        
 //        if (image1 != null) {
 //            if (topImageY < this.getHeight() - image1.getHeight(null)) {
 //                topImageY = this.getHeight() - image1.getHeight(null);
 //            }
     }
-
+    
     public void cleanUpDrops() {
         ArrayList<Drop> toRemoveList = new ArrayList<>();
         for (Drop drop : drops) {
@@ -385,27 +385,25 @@ class Mountain extends Environment {
                 toRemoveList.add(drop);
             }
         }
-
+        
         drops.removeAll(toRemoveList);
     }
-
+    
     /**
      * @return the score
      */
     public int getScore() {
         return score;
     }
-
+    
     /**
      * @param score the score to set
      */
     public void setScore(int score) {
         this.score = score;
     }
-
+    
 }
-
-// 2. Have character flash/reset when damage is taken.
-// 7. slide effect.
+//</editor-fold>
 // 8. levels?
 // 9. buffer on music
